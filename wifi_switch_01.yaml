@@ -1,0 +1,548 @@
+esphome:
+  name: wifi-switch-1
+  platform: ESP8266
+  board: esp12e
+  on_boot:
+    - priority: 300.0 # after sensor setup, before WIFI initialization 
+      then:
+        - light.turn_on: # indication that the controller has power
+            id: strip
+            brightness: 70%
+            red: 100%
+            green: 0%
+            blue: 0%
+    - priority: 200.0 # after WIFI initialization
+      then:
+        - light.turn_on: # indication that the controller is looking for a wifi connection
+            id: strip
+            brightness: 70%
+            red: 0%
+            green: 0%
+            blue: 100%
+        - delay: '00:00:05'    
+    - priority: -100.0 # everything is initialized, system is online - if condition waits for connection
+      then:
+        if:
+          condition:
+            wifi.connected:
+          then:
+            - light.turn_on: # indication of wifi connection confirmation
+                id: strip
+                brightness: 70%
+                red: 0%
+                green: 100%
+                blue: 0%
+            - delay: '00:00:05'
+            - light.turn_off: # turns off light waiting on automation to start
+                id: strip
+
+web_server:
+  port: 80 
+  
+wifi:
+  ssid: "YOUR_WIFI_SSID"
+  password: "YOUR_WIFI_PASSWORD"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "wifi_switch_1"
+    password: "12345678"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+light:
+  - platform: neopixelbus
+    type: GRB
+    variant: WS2812X
+    pin: 3
+    num_leds: 4
+    name: "ws_1_led"
+    id: strip
+
+  - platform: partition
+    name: "ws_1_led1"
+    id: led1
+    segments:
+      - id: strip
+        from: 0
+        to: 0
+    effects:
+      - random:
+      - addressable_rainbow:
+      - strobe:
+          name: Strobe_Green
+          colors:
+            - state: True
+              brightness: 75%
+              green: 100%
+              blue: 0%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:              
+          name: Strobe_Red
+          colors:
+            - state: True
+              brightness: 75%
+              green: 0%
+              blue: 0%
+              red: 100%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:
+          name: Strobe_Blue
+          colors:
+            - state: True
+              brightness: 70%
+              green: 0%
+              blue: 100%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+                  
+  - platform: partition
+    name: "ws_1_led2"
+    id: led2
+    segments:
+      - id: strip
+        from: 1
+        to: 1
+    effects:
+      - random:
+      - addressable_rainbow:
+      - strobe:
+          name: Strobe_Green
+          colors:
+            - state: True
+              brightness: 75%
+              green: 100%
+              blue: 0%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:              
+          name: Strobe_Red
+          colors:
+            - state: True
+              brightness: 75%
+              green: 0%
+              blue: 0%
+              red: 100%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:
+          name: Strobe_Blue
+          colors:
+            - state: True
+              brightness: 70%
+              green: 0%
+              blue: 100%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      
+  - platform: partition
+    name: "ws_1_led3"
+    id: led3
+    segments:
+      - id: strip
+        from: 2
+        to: 2
+    effects:
+      - random:
+      - addressable_rainbow:
+      - strobe:
+          name: Strobe_Green
+          colors:
+            - state: True
+              brightness: 75%
+              green: 100%
+              blue: 0%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:              
+          name: Strobe_Red
+          colors:
+            - state: True
+              brightness: 75%
+              green: 0%
+              blue: 0%
+              red: 100%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:
+          name: Strobe_Blue
+          colors:
+            - state: True
+              brightness: 70%
+              green: 0%
+              blue: 100%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      
+  - platform: partition
+    name: "ws_1_led4"
+    id: led4
+    segments:
+      - id: strip
+        from: 3
+        to: 3
+    effects:
+      - random:
+      - addressable_rainbow:
+      - strobe:
+          name: Strobe_Green
+          colors:
+            - state: True
+              brightness: 75%
+              green: 100%
+              blue: 0%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:              
+          name: Strobe_Red
+          colors:
+            - state: True
+              brightness: 75%
+              green: 0%
+              blue: 0%
+              red: 100%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      - strobe:
+          name: Strobe_Blue
+          colors:
+            - state: True
+              brightness: 70%
+              green: 0%
+              blue: 100%
+              red: 0%
+              duration: 500ms
+            - state: False
+              duration: 500ms
+      
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "ws_1_button_1"
+
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "ws_1_button_2"    
+    on_multi_click:
+    - timing:
+        - ON for at most 1s
+        - OFF for at most 0.5s
+        - ON for at most 1s
+        - OFF for at least 0.1s
+        - ON for at most 1s
+        - OFF for at most 0.5s
+        - ON for at most 1s
+        - OFF for at least 0.1s
+        - ON for at most 1s
+        - OFF for at most 0.5s
+        - ON for at most 1s
+        - OFF for at least 0.1s
+        - ON for at most 1s
+        - OFF for at most 0.5s
+        - ON for at most 1s
+        - OFF for at least 0.1s
+        - ON for at most 1s
+        - OFF for at most 0.5s
+        - ON for at most 1s
+        - OFF for at least 0.1s
+      then:
+        - logger.log: "Clicked 10 times"
+        - switch.turn_on: "restart_ws_1"  
+    
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "ws_1_button_3"      
+    
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "ws_1_button_4"      
+
+
+output:
+  - platform: esp8266_pwm
+    pin: GPIO14
+    id: buzzer
+
+switch:
+  - platform: restart
+    name: "Restart ws_1"
+    id: "restart_ws_1"
+
+  - platform: template
+    name: "ws_1_Buzz_Single_Biip"
+    icon: "mdi:bell-ring"
+    turn_on_action:
+      - if:
+          condition:
+            - script.is_running: SingleBiip
+          then:
+            - script.stop: SingleBiip
+            - script.execute: SingleBiip
+          else:
+            - script.execute: SingleBiip    
+
+  - platform: template
+    name: "ws_1_Buzz_Double_Biip"
+    icon: "mdi:bell-ring"
+    turn_on_action:
+      - if:
+          condition:
+            - script.is_running: DoubleBiip
+          then:
+            - script.stop: DoubleBiip
+            - script.execute: DoubleBiip
+          else:
+            - script.execute: DoubleBiip    
+
+  - platform: template
+    name: "ws_1_Buzz_Imperial_March"
+    icon: "mdi:bell-ring"
+    turn_on_action:
+      - if:
+          condition:
+            - script.is_running: ImperialMarch
+          then:
+            - script.stop: ImperialMarch
+            - script.execute: ImperialMarch
+          else:
+            - script.execute: ImperialMarch    
+
+  - platform: template
+    name: "ws_1_Buzz_Super_Mario"
+    icon: "mdi:bell-ring"
+    turn_on_action:
+      - if:
+          condition:
+            - script.is_running: SuperMario
+          then:
+            - script.stop: SuperMario
+            - script.execute: SuperMario
+          else:
+            - script.execute: SuperMario
+
+
+script:
+  - id: SingleBiip
+    then:
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 4000
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 350ms
+        - output.turn_off: buzzer
+
+  - id: DoubleBiip
+    then:
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 4000
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 250ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 4000
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 250ms
+        - output.turn_off: buzzer
+
+  - id: SuperMario
+    then:
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 660 
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+        - delay: 150ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 660 
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+        - delay: 300ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 660
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+        - delay: 300ms        
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 510
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+        - delay: 100ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 660
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+        - delay: 300ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 770
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+        - delay: 550ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 380
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 100ms
+        - output.turn_off: buzzer
+
+  - id: ImperialMarch
+    then:
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 440
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 500ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 440
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 500ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 440
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 500ms
+        - output.turn_off: buzzer
+        - delay: 20ms        
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 349
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 350ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 523
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 150ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 440
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 500ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 349
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 350ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 523
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 150ms
+        - output.turn_off: buzzer
+        - delay: 20ms
+        - output.esp8266_pwm.set_frequency:
+            id: buzzer
+            frequency: 440
+        - output.set_level:
+            id: buzzer
+            level: 50%
+        - delay: 650ms
+        - output.turn_off: buzzer
+
+sensor:
+  - platform: wifi_signal
+    name: "ws_1_WiFi_Signal_Sensor"
+    update_interval: 60s
+
